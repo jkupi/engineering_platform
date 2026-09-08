@@ -1,10 +1,9 @@
+import Header from "@/components/Header";
+
 export default function Home() {
   return (
     <>
-      <header>
-        <h1>Engineering Platform</h1>
-        <p>A web-based engineering analysis and learning platform.</p>
-      </header>
+      <Header />
 
       <main>
         <section>
