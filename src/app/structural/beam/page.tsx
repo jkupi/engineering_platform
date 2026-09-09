@@ -1,10 +1,13 @@
+"use client";
+
+import { useState } from "react";
 import BeamModel from "@/components/BeamModel";
 import type { Beam } from "@/engine/structures/beam/types";
 
 export default function BeamPage() {
-  const beam: Beam = {
+  const [beam, setBeam] = useState<Beam>({
     length: 6,
-  };
+  });
 
   return (
     <main>
@@ -15,12 +18,27 @@ export default function BeamPage() {
         moments.
       </p>
 
-       <BeamModel beam={beam} />
+      <BeamModel beam={beam} />
 
       <section>
         <h2>Inputs</h2>
 
-        <p>Beam properties, supports, and loads will be configured here.</p>
+        <label htmlFor="beam-length">Beam Length</label>
+
+        <input
+          id="beam-length"
+          type="number"
+          value={beam.length}
+          onChange={(event) => {
+            const newLength = Number(event.target.value);
+
+            setBeam({
+              ...beam,
+              length: newLength,
+            });
+          }}
+        />
+        <span> m</span>
       </section>
 
       <section>
