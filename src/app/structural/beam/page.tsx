@@ -9,6 +9,13 @@ export default function BeamPage() {
     length: 6,
   });
 
+  const [lengthInput, setLengthInput] = useState("6");
+
+  const parsedLength = Number(lengthInput);
+
+  const isLengthValid =
+    lengthInput !== "" && Number.isFinite(parsedLength) && parsedLength > 0;
+
   return (
     <main>
       <h1>Beam Analysis</h1>
@@ -28,17 +35,32 @@ export default function BeamPage() {
         <input
           id="beam-length"
           type="number"
-          value={beam.length}
+          min="0.01"
+          step="0.01"
+          value={lengthInput}
           onChange={(event) => {
-            const newLength = Number(event.target.value);
+            const newInput = event.target.value;
 
-            setBeam({
-              ...beam,
-              length: newLength,
-            });
+            setLengthInput(newInput);
+
+            const newLength = Number(newInput);
+
+            if (
+              newInput !== "" &&
+              Number.isFinite(newLength) &&
+              newLength > 0
+            ) {
+              setBeam({
+                ...beam,
+                length: newLength,
+              });
+            }
           }}
         />
+
         <span> m</span>
+
+        {!isLengthValid && <p>Beam length must be greater than 0.</p>}
       </section>
 
       <section>
