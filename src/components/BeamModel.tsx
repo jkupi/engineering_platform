@@ -1,10 +1,16 @@
 import type { Beam } from "@/engine/structures/beam/types";
+import PinSupport from "@/components/PinSupport";
+import RollerSupport from "@/components/RollerSupport";
 
 type BeamModelProps = {
   beam: Beam;
 };
 
 export default function BeamModel({ beam }: BeamModelProps) {
+  const leftX = 80;
+  const rightX = 520;
+  const beamY = 70;
+
   return (
     <section>
       <h2>Beam Model</h2>
@@ -18,74 +24,24 @@ export default function BeamModel({ beam }: BeamModelProps) {
       >
         {/* Beam */}
         <line
-          x1="80"
-          y1="70"
-          x2="520"
-          y2="70"
+          x1={leftX}
+          y1={beamY}
+          x2={rightX}
+          y2={beamY}
           stroke="currentColor"
           strokeWidth="6"
         />
 
-        {/* Left pin support */}
-        <polygon
-          points="80,70 60,110 100,110"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="3"
-        />
+        {/* Supports */}
+        <PinSupport x={leftX} y={beamY} />
 
-        {/* Ground line under left support */}
-        <line
-          x1="50"
-          y1="110"
-          x2="110"
-          y2="110"
-          stroke="currentColor"
-          strokeWidth="3"
-        />
-
-        {/* Right roller support triangle */}
-        <polygon
-          points="520,70 500,110 540,110"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="3"
-        />
-
-        {/* Right roller circles */}
-        <circle
-          cx="510"
-          cy="119"
-          r="7"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="3"
-        />
-
-        <circle
-          cx="530"
-          cy="119"
-          r="7"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="3"
-        />
-
-        {/* Ground line under roller support */}
-        <line
-          x1="490"
-          y1="130"
-          x2="550"
-          y2="130"
-          stroke="currentColor"
-          strokeWidth="3"
-        />
+        <RollerSupport x={rightX} y={beamY} />
 
         {/* Dimension line */}
         <line
-          x1="80"
+          x1={leftX}
           y1="150"
-          x2="520"
+          x2={rightX}
           y2="150"
           stroke="currentColor"
           strokeWidth="1"
@@ -93,9 +49,9 @@ export default function BeamModel({ beam }: BeamModelProps) {
 
         {/* Left dimension marker */}
         <line
-          x1="80"
+          x1={leftX}
           y1="142"
-          x2="80"
+          x2={leftX}
           y2="158"
           stroke="currentColor"
           strokeWidth="1"
@@ -103,9 +59,9 @@ export default function BeamModel({ beam }: BeamModelProps) {
 
         {/* Right dimension marker */}
         <line
-          x1="520"
+          x1={rightX}
           y1="142"
-          x2="520"
+          x2={rightX}
           y2="158"
           stroke="currentColor"
           strokeWidth="1"
@@ -113,7 +69,7 @@ export default function BeamModel({ beam }: BeamModelProps) {
 
         {/* Beam length */}
         <text
-          x="300"
+          x={(leftX + rightX) / 2}
           y="172"
           textAnchor="middle"
           fill="currentColor"
