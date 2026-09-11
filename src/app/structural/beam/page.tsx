@@ -1,14 +1,6 @@
-"use client";
-
-import { useState } from "react";
-import BeamModel from "@/components/BeamModel";
-import type { Beam } from "@/engine/structures/beam/types";
-import BeamInputs from "@/components/BeamInputs";
+import BeamWorkspace from "@/components/BeamWorkspace";
 
 export default function BeamPage() {
-  const [beam, setBeam] = useState<Beam>({
-    length: 6,
-  });
 
   return (
     <main>
@@ -19,9 +11,7 @@ export default function BeamPage() {
         moments.
       </p>
 
-      <BeamModel beam={beam} />
-
-      <BeamInputs beam={beam} onBeamChange={setBeam} />
+      <BeamWorkspace />
 
       <section>
         <h2>Results</h2>
