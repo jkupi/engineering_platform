@@ -7,41 +7,52 @@ type BeamModelProps = {
 };
 
 export default function BeamModel({ beam }: BeamModelProps) {
-  const leftX = 80;
-  const rightX = 520;
+  const svgWidth = 600;
+  const beamStartX = 80;
+  const beamEndX = 520;
   const beamY = 70;
+
+  const drawableBeamWidth = beamEndX - beamStartX;
+
+  const positionToSvgX = (position: number) => {
+    return beamStartX + (position / beam.length) * drawableBeamWidth;
+  };
+
+  const leftSupportX = positionToSvgX(beam.leftSupportPosition);
+
+  const rightSupportX = positionToSvgX(beam.rightSupportPosition);
 
   return (
     <section>
       <h2>Beam Model</h2>
 
       <svg
-        viewBox="0 0 600 180"
+        viewBox={`0 0 ${svgWidth} 180`}
         width="100%"
         height="180"
         role="img"
-        aria-label={`Simply supported beam with a length of ${beam.length} meters`}
+        aria-label={`Beam with a length of ${beam.length} meters`}
       >
         {/* Beam */}
         <line
-          x1={leftX}
+          x1={beamStartX}
           y1={beamY}
-          x2={rightX}
+          x2={beamEndX}
           y2={beamY}
           stroke="currentColor"
           strokeWidth="6"
         />
 
         {/* Supports */}
-        <PinSupport x={leftX} y={beamY} />
+        <PinSupport x={leftSupportX} y={beamY} />
 
-        <RollerSupport x={rightX} y={beamY} />
+        <RollerSupport x={rightSupportX} y={beamY} />
 
         {/* Dimension line */}
         <line
-          x1={leftX}
+          x1={beamStartX}
           y1="150"
-          x2={rightX}
+          x2={beamEndX}
           y2="150"
           stroke="currentColor"
           strokeWidth="1"
@@ -49,9 +60,9 @@ export default function BeamModel({ beam }: BeamModelProps) {
 
         {/* Left dimension marker */}
         <line
-          x1={leftX}
+          x1={beamStartX}
           y1="142"
-          x2={leftX}
+          x2={beamStartX}
           y2="158"
           stroke="currentColor"
           strokeWidth="1"
@@ -59,9 +70,9 @@ export default function BeamModel({ beam }: BeamModelProps) {
 
         {/* Right dimension marker */}
         <line
-          x1={rightX}
+          x1={beamEndX}
           y1="142"
-          x2={rightX}
+          x2={beamEndX}
           y2="158"
           stroke="currentColor"
           strokeWidth="1"
@@ -69,7 +80,7 @@ export default function BeamModel({ beam }: BeamModelProps) {
 
         {/* Beam length */}
         <text
-          x={(leftX + rightX) / 2}
+          x={(beamStartX + beamEndX) / 2}
           y="172"
           textAnchor="middle"
           fill="currentColor"

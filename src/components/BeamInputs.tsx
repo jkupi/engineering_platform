@@ -39,6 +39,8 @@ export default function BeamInputs({ beam, onBeamChange }: BeamInputsProps) {
             onBeamChange({
               ...beam,
               length: newLength,
+              leftSupportPosition: 0,
+              rightSupportPosition: newLength,
             });
           }
         }}

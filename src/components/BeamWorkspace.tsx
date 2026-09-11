@@ -8,6 +8,8 @@ import type { Beam } from "@/engine/structures/beam/types";
 export default function BeamWorkspace() {
   const [beam, setBeam] = useState<Beam>({
     length: 6,
+    leftSupportPosition: 0,
+    rightSupportPosition: 6,
   });
 
   return (
