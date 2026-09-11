@@ -14,9 +14,7 @@ export default function Home() {
             Analyze structural systems including beams, trusses, and frames.
           </p>
 
-          <Link href="/structural">
-            Open Structural Analysis
-          </Link>
+          <Link href="/structural">Open Structural Analysis</Link>
         </section>
       </main>
     </>

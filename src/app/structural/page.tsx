@@ -16,9 +16,7 @@ export default function StructuralPage() {
           Analyze beams with supports and loads and view structural results.
         </p>
 
-        <Link href="/structural/beam">
-          Open Beam Analysis
-        </Link>
+        <Link href="/structural/beam">Open Beam Analysis</Link>
       </section>
     </main>
   );

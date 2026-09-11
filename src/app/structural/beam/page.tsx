@@ -1,7 +1,6 @@
 import BeamWorkspace from "@/components/BeamWorkspace";
 
 export default function BeamPage() {
-
   return (
     <main>
       <h1>Beam Analysis</h1>

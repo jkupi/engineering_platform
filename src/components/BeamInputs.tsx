@@ -8,28 +8,19 @@ type BeamInputsProps = {
   onBeamChange: (beam: Beam) => void;
 };
 
-export default function BeamInputs({
-  beam,
-  onBeamChange,
-}: BeamInputsProps) {
-  const [lengthInput, setLengthInput] = useState(
-    beam.length.toString()
-  );
+export default function BeamInputs({ beam, onBeamChange }: BeamInputsProps) {
+  const [lengthInput, setLengthInput] = useState(beam.length.toString());
 
   const parsedLength = Number(lengthInput);
 
   const isLengthValid =
-    lengthInput !== "" &&
-    Number.isFinite(parsedLength) &&
-    parsedLength > 0;
+    lengthInput !== "" && Number.isFinite(parsedLength) && parsedLength > 0;
 
   return (
     <section>
       <h2>Inputs</h2>
 
-      <label htmlFor="beam-length">
-        Beam Length
-      </label>
+      <label htmlFor="beam-length">Beam Length</label>
 
       <input
         id="beam-length"
@@ -44,11 +35,7 @@ export default function BeamInputs({
 
           const newLength = Number(newInput);
 
-          if (
-            newInput !== "" &&
-            Number.isFinite(newLength) &&
-            newLength > 0
-          ) {
+          if (newInput !== "" && Number.isFinite(newLength) && newLength > 0) {
             onBeamChange({
               ...beam,
               length: newLength,
@@ -59,11 +46,7 @@ export default function BeamInputs({
 
       <span> m</span>
 
-      {!isLengthValid && (
-        <p>
-          Beam length must be greater than 0.
-        </p>
-      )}
+      {!isLengthValid && <p>Beam length must be greater than 0.</p>}
     </section>
   );
 }
