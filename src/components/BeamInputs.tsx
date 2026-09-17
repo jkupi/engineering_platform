@@ -2,6 +2,11 @@
 
 import { useState } from "react";
 import type { Beam } from "@/engine/structures/beam/types";
+import {
+  validateBeamLength,
+  validateSupportOrder,
+  validateSupportPosition,
+} from "@/engine/structures/beam/validation";
 
 type BeamInputsProps = {
   beam: Beam;
@@ -23,25 +28,20 @@ export default function BeamInputs({ beam, onBeamChange }: BeamInputsProps) {
   const parsedLeftSupport = Number(leftSupportInput);
   const parsedRightSupport = Number(rightSupportInput);
 
-  const isLengthValid =
-    lengthInput !== "" && Number.isFinite(parsedLength) && parsedLength > 0;
+  const isLengthValid = lengthInput !== "" && validateBeamLength(parsedLength);
 
   const isLeftSupportValid =
     leftSupportInput !== "" &&
-    Number.isFinite(parsedLeftSupport) &&
-    parsedLeftSupport >= 0 &&
-    parsedLeftSupport <= beam.length;
+    validateSupportPosition(parsedLeftSupport, beam.length);
 
   const isRightSupportValid =
     rightSupportInput !== "" &&
-    Number.isFinite(parsedRightSupport) &&
-    parsedRightSupport >= 0 &&
-    parsedRightSupport <= beam.length;
+    validateSupportPosition(parsedRightSupport, beam.length);
 
   const isSupportOrderValid =
     isLeftSupportValid &&
     isRightSupportValid &&
-    parsedLeftSupport <= parsedRightSupport;
+    validateSupportOrder(parsedLeftSupport, parsedRightSupport);
 
   return (
     <section>
@@ -63,11 +63,8 @@ export default function BeamInputs({ beam, onBeamChange }: BeamInputsProps) {
 
             const newLength = Number(newInput);
 
-            if (
-              newInput !== "" &&
-              Number.isFinite(newLength) &&
-              newLength > 0
-            ) {
+            if (newInput !== "" && validateBeamLength(newLength)) {
+              setLeftSupportInput("0");
               setRightSupportInput(newLength.toString());
 
               onBeamChange({
@@ -104,10 +101,8 @@ export default function BeamInputs({ beam, onBeamChange }: BeamInputsProps) {
 
             if (
               newInput !== "" &&
-              Number.isFinite(newPosition) &&
-              newPosition >= 0 &&
-              newPosition <= beam.length &&
-              newPosition <= beam.rightSupportPosition
+              validateSupportPosition(newPosition, beam.length) &&
+              validateSupportOrder(newPosition, beam.rightSupportPosition)
             ) {
               onBeamChange({
                 ...beam,
@@ -143,10 +138,8 @@ export default function BeamInputs({ beam, onBeamChange }: BeamInputsProps) {
 
             if (
               newInput !== "" &&
-              Number.isFinite(newPosition) &&
-              newPosition >= 0 &&
-              newPosition <= beam.length &&
-              newPosition >= beam.leftSupportPosition
+              validateSupportPosition(newPosition, beam.length) &&
+              validateSupportOrder(beam.leftSupportPosition, newPosition)
             ) {
               onBeamChange({
                 ...beam,
