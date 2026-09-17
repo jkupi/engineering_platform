@@ -3,6 +3,7 @@
 import { useState } from "react";
 import type { Beam } from "@/engine/structures/beam/types";
 import {
+  validateBeam,
   validateBeamLength,
   validateSupportOrder,
   validateSupportPosition,
@@ -28,20 +29,26 @@ export default function BeamInputs({ beam, onBeamChange }: BeamInputsProps) {
   const parsedLeftSupport = Number(leftSupportInput);
   const parsedRightSupport = Number(rightSupportInput);
 
-  const isLengthValid = lengthInput !== "" && validateBeamLength(parsedLength);
+  const candidateBeam: Beam = {
+    length: parsedLength,
+    leftSupportPosition: parsedLeftSupport,
+    rightSupportPosition: parsedRightSupport,
+  };
+
+  const beamValidation = validateBeam(candidateBeam);
+
+  const isLengthValid = lengthInput !== "" && beamValidation.isLengthValid;
 
   const isLeftSupportValid =
-    leftSupportInput !== "" &&
-    validateSupportPosition(parsedLeftSupport, beam.length);
+    leftSupportInput !== "" && beamValidation.isLeftSupportValid;
 
   const isRightSupportValid =
-    rightSupportInput !== "" &&
-    validateSupportPosition(parsedRightSupport, beam.length);
+    rightSupportInput !== "" && beamValidation.isRightSupportValid;
 
   const isSupportOrderValid =
-    isLeftSupportValid &&
-    isRightSupportValid &&
-    validateSupportOrder(parsedLeftSupport, parsedRightSupport);
+    leftSupportInput !== "" &&
+    rightSupportInput !== "" &&
+    beamValidation.isSupportOrderValid;
 
   return (
     <section>
