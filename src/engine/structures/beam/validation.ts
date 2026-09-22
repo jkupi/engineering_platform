@@ -3,8 +3,7 @@ import type { Beam } from "@/engine/structures/beam/types";
 export type BeamValidationResult = {
   isValid: boolean;
   isLengthValid: boolean;
-  isLeftSupportValid: boolean;
-  isRightSupportValid: boolean;
+  areSupportPositionsValid: boolean;
   isSupportOrderValid: boolean;
 };
 
@@ -20,39 +19,32 @@ export function validateSupportPosition(
 }
 
 export function validateSupportOrder(
-  leftPosition: number,
-  rightPosition: number,
+  firstPosition: number,
+  secondPosition: number,
 ): boolean {
-  return leftPosition <= rightPosition;
+  return firstPosition <= secondPosition;
 }
 
 export function validateBeam(beam: Beam): BeamValidationResult {
   const isLengthValid = validateBeamLength(beam.length);
 
-  const isLeftSupportValid =
+  const areSupportPositionsValid =
     isLengthValid &&
-    validateSupportPosition(beam.leftSupportPosition, beam.length);
-
-  const isRightSupportValid =
-    isLengthValid &&
-    validateSupportPosition(beam.rightSupportPosition, beam.length);
+    beam.supports.every((support) =>
+      validateSupportPosition(support.position, beam.length),
+    );
 
   const isSupportOrderValid =
-    isLeftSupportValid &&
-    isRightSupportValid &&
-    validateSupportOrder(beam.leftSupportPosition, beam.rightSupportPosition);
+    beam.supports.length < 2 ||
+    validateSupportOrder(beam.supports[0].position, beam.supports[1].position);
 
   const isValid =
-    isLengthValid &&
-    isLeftSupportValid &&
-    isRightSupportValid &&
-    isSupportOrderValid;
+    isLengthValid && areSupportPositionsValid && isSupportOrderValid;
 
   return {
     isValid,
     isLengthValid,
-    isLeftSupportValid,
-    isRightSupportValid,
+    areSupportPositionsValid,
     isSupportOrderValid,
   };
 }

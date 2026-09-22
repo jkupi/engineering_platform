@@ -15,39 +15,52 @@ type BeamInputsProps = {
 };
 
 export default function BeamInputs({ beam, onBeamChange }: BeamInputsProps) {
+  const pinSupport = beam.supports[0];
+  const rollerSupport = beam.supports[1];
+
   const [lengthInput, setLengthInput] = useState(beam.length.toString());
 
-  const [leftSupportInput, setLeftSupportInput] = useState(
-    beam.leftSupportPosition.toString(),
+  const [pinSupportInput, setPinSupportInput] = useState(
+    pinSupport.position.toString(),
   );
 
-  const [rightSupportInput, setRightSupportInput] = useState(
-    beam.rightSupportPosition.toString(),
+  const [rollerSupportInput, setRollerSupportInput] = useState(
+    rollerSupport.position.toString(),
   );
 
   const parsedLength = Number(lengthInput);
-  const parsedLeftSupport = Number(leftSupportInput);
-  const parsedRightSupport = Number(rightSupportInput);
+  const parsedPinSupport = Number(pinSupportInput);
+  const parsedRollerSupport = Number(rollerSupportInput);
 
   const candidateBeam: Beam = {
     length: parsedLength,
-    leftSupportPosition: parsedLeftSupport,
-    rightSupportPosition: parsedRightSupport,
+    supports: [
+      {
+        type: "pin",
+        position: parsedPinSupport,
+      },
+      {
+        type: "roller",
+        position: parsedRollerSupport,
+      },
+    ],
   };
 
   const beamValidation = validateBeam(candidateBeam);
 
   const isLengthValid = lengthInput !== "" && beamValidation.isLengthValid;
 
-  const isLeftSupportValid =
-    leftSupportInput !== "" && beamValidation.isLeftSupportValid;
+  const isPinSupportValid =
+    pinSupportInput !== "" &&
+    validateSupportPosition(parsedPinSupport, parsedLength);
 
-  const isRightSupportValid =
-    rightSupportInput !== "" && beamValidation.isRightSupportValid;
+  const isRollerSupportValid =
+    rollerSupportInput !== "" &&
+    validateSupportPosition(parsedRollerSupport, parsedLength);
 
   const isSupportOrderValid =
-    leftSupportInput !== "" &&
-    rightSupportInput !== "" &&
+    pinSupportInput !== "" &&
+    rollerSupportInput !== "" &&
     beamValidation.isSupportOrderValid;
 
   return (
@@ -65,20 +78,27 @@ export default function BeamInputs({ beam, onBeamChange }: BeamInputsProps) {
           value={lengthInput}
           onChange={(event) => {
             const newInput = event.target.value;
-
             setLengthInput(newInput);
 
             const newLength = Number(newInput);
 
             if (newInput !== "" && validateBeamLength(newLength)) {
-              setLeftSupportInput("0");
-              setRightSupportInput(newLength.toString());
+              setPinSupportInput("0");
+              setRollerSupportInput(newLength.toString());
 
               onBeamChange({
                 ...beam,
                 length: newLength,
-                leftSupportPosition: 0,
-                rightSupportPosition: newLength,
+                supports: [
+                  {
+                    ...pinSupport,
+                    position: 0,
+                  },
+                  {
+                    ...rollerSupport,
+                    position: newLength,
+                  },
+                ],
               });
             }
           }}
@@ -90,30 +110,35 @@ export default function BeamInputs({ beam, onBeamChange }: BeamInputsProps) {
       </div>
 
       <div>
-        <label htmlFor="left-support-position">Left Support Position</label>
+        <label htmlFor="pin-support-position">Pin Support Position</label>
 
         <input
-          id="left-support-position"
+          id="pin-support-position"
           type="number"
           min="0"
           max={beam.length}
           step="0.01"
-          value={leftSupportInput}
+          value={pinSupportInput}
           onChange={(event) => {
             const newInput = event.target.value;
-
-            setLeftSupportInput(newInput);
+            setPinSupportInput(newInput);
 
             const newPosition = Number(newInput);
 
             if (
               newInput !== "" &&
               validateSupportPosition(newPosition, beam.length) &&
-              validateSupportOrder(newPosition, beam.rightSupportPosition)
+              validateSupportOrder(newPosition, rollerSupport.position)
             ) {
               onBeamChange({
                 ...beam,
-                leftSupportPosition: newPosition,
+                supports: [
+                  {
+                    ...pinSupport,
+                    position: newPosition,
+                  },
+                  rollerSupport,
+                ],
               });
             }
           }}
@@ -121,36 +146,41 @@ export default function BeamInputs({ beam, onBeamChange }: BeamInputsProps) {
 
         <span> m</span>
 
-        {!isLeftSupportValid && (
-          <p>Left support must be between 0 and {beam.length} m.</p>
+        {!isPinSupportValid && (
+          <p>Pin support must be between 0 and {beam.length} m.</p>
         )}
       </div>
 
       <div>
-        <label htmlFor="right-support-position">Right Support Position</label>
+        <label htmlFor="roller-support-position">Roller Support Position</label>
 
         <input
-          id="right-support-position"
+          id="roller-support-position"
           type="number"
           min="0"
           max={beam.length}
           step="0.01"
-          value={rightSupportInput}
+          value={rollerSupportInput}
           onChange={(event) => {
             const newInput = event.target.value;
-
-            setRightSupportInput(newInput);
+            setRollerSupportInput(newInput);
 
             const newPosition = Number(newInput);
 
             if (
               newInput !== "" &&
               validateSupportPosition(newPosition, beam.length) &&
-              validateSupportOrder(beam.leftSupportPosition, newPosition)
+              validateSupportOrder(pinSupport.position, newPosition)
             ) {
               onBeamChange({
                 ...beam,
-                rightSupportPosition: newPosition,
+                supports: [
+                  pinSupport,
+                  {
+                    ...rollerSupport,
+                    position: newPosition,
+                  },
+                ],
               });
             }
           }}
@@ -158,13 +188,13 @@ export default function BeamInputs({ beam, onBeamChange }: BeamInputsProps) {
 
         <span> m</span>
 
-        {!isRightSupportValid && (
-          <p>Right support must be between 0 and {beam.length} m.</p>
+        {!isRollerSupportValid && (
+          <p>Roller support must be between 0 and {beam.length} m.</p>
         )}
       </div>
 
       {!isSupportOrderValid && (
-        <p>Left support cannot be positioned after the right support.</p>
+        <p>Pin support cannot be positioned after the roller support.</p>
       )}
     </section>
   );

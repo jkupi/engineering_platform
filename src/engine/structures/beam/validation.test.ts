@@ -6,36 +6,61 @@ describe("validateBeam", () => {
   it("accepts a valid beam", () => {
     const beam: Beam = {
       length: 6,
-      leftSupportPosition: 0,
-      rightSupportPosition: 6,
+      supports: [
+        {
+          type: "pin",
+          position: 0,
+        },
+        {
+          type: "roller",
+          position: 6,
+        },
+      ],
     };
 
     const result = validateBeam(beam);
 
     expect(result.isValid).toBe(true);
     expect(result.isLengthValid).toBe(true);
-    expect(result.isLeftSupportValid).toBe(true);
-    expect(result.isRightSupportValid).toBe(true);
+    expect(result.areSupportPositionsValid).toBe(true);
     expect(result.isSupportOrderValid).toBe(true);
   });
 
   it("accepts valid support positions inside the beam", () => {
     const beam: Beam = {
       length: 6,
-      leftSupportPosition: 1,
-      rightSupportPosition: 5,
+      supports: [
+        {
+          type: "pin",
+          position: 1,
+        },
+        {
+          type: "roller",
+          position: 5,
+        },
+      ],
     };
 
     const result = validateBeam(beam);
 
     expect(result.isValid).toBe(true);
+    expect(result.areSupportPositionsValid).toBe(true);
+    expect(result.isSupportOrderValid).toBe(true);
   });
 
   it("rejects a zero beam length", () => {
     const beam: Beam = {
       length: 0,
-      leftSupportPosition: 0,
-      rightSupportPosition: 0,
+      supports: [
+        {
+          type: "pin",
+          position: 0,
+        },
+        {
+          type: "roller",
+          position: 0,
+        },
+      ],
     };
 
     const result = validateBeam(beam);
@@ -47,8 +72,16 @@ describe("validateBeam", () => {
   it("rejects a negative beam length", () => {
     const beam: Beam = {
       length: -6,
-      leftSupportPosition: 0,
-      rightSupportPosition: 0,
+      supports: [
+        {
+          type: "pin",
+          position: 0,
+        },
+        {
+          type: "roller",
+          position: 0,
+        },
+      ],
     };
 
     const result = validateBeam(beam);
@@ -57,52 +90,83 @@ describe("validateBeam", () => {
     expect(result.isLengthValid).toBe(false);
   });
 
-  it("rejects a left support before the beam", () => {
+  it("rejects a support before the beam", () => {
     const beam: Beam = {
       length: 6,
-      leftSupportPosition: -1,
-      rightSupportPosition: 5,
+      supports: [
+        {
+          type: "pin",
+          position: -1,
+        },
+        {
+          type: "roller",
+          position: 5,
+        },
+      ],
     };
 
     const result = validateBeam(beam);
 
     expect(result.isValid).toBe(false);
-    expect(result.isLeftSupportValid).toBe(false);
+    expect(result.areSupportPositionsValid).toBe(false);
   });
 
-  it("rejects a right support beyond the beam", () => {
+  it("rejects a support beyond the beam", () => {
     const beam: Beam = {
       length: 6,
-      leftSupportPosition: 1,
-      rightSupportPosition: 7,
+      supports: [
+        {
+          type: "pin",
+          position: 1,
+        },
+        {
+          type: "roller",
+          position: 7,
+        },
+      ],
     };
 
     const result = validateBeam(beam);
 
     expect(result.isValid).toBe(false);
-    expect(result.isRightSupportValid).toBe(false);
+    expect(result.areSupportPositionsValid).toBe(false);
   });
 
   it("rejects reversed support positions", () => {
     const beam: Beam = {
       length: 6,
-      leftSupportPosition: 5,
-      rightSupportPosition: 2,
+      supports: [
+        {
+          type: "pin",
+          position: 5,
+        },
+        {
+          type: "roller",
+          position: 2,
+        },
+      ],
     };
 
     const result = validateBeam(beam);
 
     expect(result.isValid).toBe(false);
-    expect(result.isLeftSupportValid).toBe(true);
-    expect(result.isRightSupportValid).toBe(true);
+    expect(result.areSupportPositionsValid).toBe(true);
     expect(result.isSupportOrderValid).toBe(false);
   });
 
   it("rejects a non-finite beam length", () => {
     const beam: Beam = {
       length: Number.NaN,
-      leftSupportPosition: 0,
-      rightSupportPosition: 6,
+      supports: [
+        {
+          type: "pin",
+          position: 0,
+        },
+        {
+          type: "roller",
+          position: 6,
+        },
+      ],
     };
 
     const result = validateBeam(beam);
@@ -116,8 +180,16 @@ describe("validateBeam", () => {
 
     const beam: Beam = {
       length: Number(blankInput),
-      leftSupportPosition: 0,
-      rightSupportPosition: 6,
+      supports: [
+        {
+          type: "pin",
+          position: 0,
+        },
+        {
+          type: "roller",
+          position: 6,
+        },
+      ],
     };
 
     const result = validateBeam(beam);
