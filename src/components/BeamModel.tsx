@@ -18,13 +18,6 @@ export default function BeamModel({ beam }: BeamModelProps) {
     return beamStartX + (position / beam.length) * drawableBeamWidth;
   };
 
-  const pinSupport = beam.supports[0];
-  const rollerSupport = beam.supports[1];
-
-  const pinSupportX = positionToSvgX(pinSupport.position);
-
-  const rollerSupportX = positionToSvgX(rollerSupport.position);
-
   return (
     <section>
       <h2>Beam Model</h2>
@@ -47,9 +40,19 @@ export default function BeamModel({ beam }: BeamModelProps) {
         />
 
         {/* Supports */}
-        <PinSupport x={pinSupportX} y={beamY} />
+        {beam.supports.map((support, index) => {
+          const supportX = positionToSvgX(support.position);
 
-        <RollerSupport x={rollerSupportX} y={beamY} />
+          if (support.type === "pin") {
+            return <PinSupport key={index} x={supportX} y={beamY} />;
+          }
+
+          if (support.type === "roller") {
+            return <RollerSupport key={index} x={supportX} y={beamY} />;
+          }
+
+          return null;
+        })}
 
         {/* Dimension line */}
         <line
