@@ -5,7 +5,6 @@ import type { Beam } from "@/engine/structures/beam/types";
 import {
   validateBeam,
   validateBeamLength,
-  validateSupportOrder,
   validateSupportPosition,
 } from "@/engine/structures/beam/validation";
 
@@ -164,7 +163,7 @@ export default function BeamInputs({ beam, onBeamChange }: BeamInputsProps) {
             if (
               newInput !== "" &&
               validateSupportPosition(newPosition, beam.length) &&
-              validateSupportOrder(newPosition, rollerSupport.position)
+              newPosition !== rollerSupport.position
             ) {
               onBeamChange({
                 ...beam,
@@ -211,7 +210,7 @@ export default function BeamInputs({ beam, onBeamChange }: BeamInputsProps) {
             if (
               newInput !== "" &&
               validateSupportPosition(newPosition, beam.length) &&
-              validateSupportOrder(pinSupport.position, newPosition)
+              newPosition !== pinSupport.position
             ) {
               onBeamChange({
                 ...beam,

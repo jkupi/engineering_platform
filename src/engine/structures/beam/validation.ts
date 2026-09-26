@@ -21,13 +21,6 @@ export function validateSupportPosition(
   return Number.isFinite(position) && position >= 0 && position <= beamLength;
 }
 
-export function validateSupportOrder(
-  firstPosition: number,
-  secondPosition: number,
-): boolean {
-  return firstPosition <= secondPosition;
-}
-
 export function validateBeam(beam: Beam): BeamValidationResult {
   // check that the beam has a valid positive length
   const isLengthValid = validateBeamLength(beam.length);
