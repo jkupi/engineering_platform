@@ -9,3 +9,8 @@ export type Beam = {
   length: number;
   supports: Support[];
 };
+
+export type PointLoad = {
+  position: number;
+  magnitude: number;
+};
