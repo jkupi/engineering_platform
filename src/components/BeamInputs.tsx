@@ -81,7 +81,7 @@ export default function BeamInputs({ beam, onBeamChange }: BeamInputsProps) {
   const isSupportOrderValid =
     pinSupportInput !== "" &&
     rollerSupportInput !== "" &&
-    beamValidation.isSupportOrderValid;
+    parsedPinSupport <= parsedRollerSupport;
 
   return (
     <section>
