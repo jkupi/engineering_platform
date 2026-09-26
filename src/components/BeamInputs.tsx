@@ -15,23 +15,42 @@ type BeamInputsProps = {
 };
 
 export default function BeamInputs({ beam, onBeamChange }: BeamInputsProps) {
-  const pinSupport = beam.supports[0];
-  const rollerSupport = beam.supports[1];
+  // Find each support by its type
+  const pinSupport = beam.supports.find((support) => support.type === "pin");
 
+  const rollerSupport = beam.supports.find(
+    (support) => support.type === "roller",
+  );
+
+  // stores beam length input as text so user can edit
   const [lengthInput, setLengthInput] = useState(beam.length.toString());
 
+  // stores pin support position input or empty string
   const [pinSupportInput, setPinSupportInput] = useState(
-    pinSupport.position.toString(),
+    pinSupport?.position.toString() ?? "",
   );
 
+  // stores roller support position input or empty string
   const [rollerSupportInput, setRollerSupportInput] = useState(
-    rollerSupport.position.toString(),
+    rollerSupport?.position.toString() ?? "",
   );
 
+  if (!pinSupport || !rollerSupport) {
+    return (
+      <section>
+        <h2>Inputs</h2>
+
+        <p>This beam requires one pin support and one roller support.</p>
+      </section>
+    );
+  }
+
+  // Convert the input strings into numbers for validation
   const parsedLength = Number(lengthInput);
   const parsedPinSupport = Number(pinSupportInput);
   const parsedRollerSupport = Number(rollerSupportInput);
 
+  // creates temporary beam from the current form values
   const candidateBeam: Beam = {
     length: parsedLength,
     supports: [
@@ -48,6 +67,7 @@ export default function BeamInputs({ beam, onBeamChange }: BeamInputsProps) {
 
   const beamValidation = validateBeam(candidateBeam);
 
+  // Blank strings are handled here
   const isLengthValid = lengthInput !== "" && beamValidation.isLengthValid;
 
   const isPinSupportValid =
@@ -67,6 +87,7 @@ export default function BeamInputs({ beam, onBeamChange }: BeamInputsProps) {
     <section>
       <h2>Inputs</h2>
 
+      {/* Beam Length */}
       <div>
         <label htmlFor="beam-length">Beam Length</label>
 
@@ -78,27 +99,40 @@ export default function BeamInputs({ beam, onBeamChange }: BeamInputsProps) {
           value={lengthInput}
           onChange={(event) => {
             const newInput = event.target.value;
+
             setLengthInput(newInput);
 
             const newLength = Number(newInput);
 
             if (newInput !== "" && validateBeamLength(newLength)) {
+              // changing the length resets the pin to the
+              // beginning and the roller to the end.
               setPinSupportInput("0");
               setRollerSupportInput(newLength.toString());
 
               onBeamChange({
                 ...beam,
                 length: newLength,
-                supports: [
-                  {
-                    ...pinSupport,
-                    position: 0,
-                  },
-                  {
-                    ...rollerSupport,
-                    position: newLength,
-                  },
-                ],
+
+                // Preserve the existing support array order,
+                // only change the positions of supports that we recognize
+                supports: beam.supports.map((support) => {
+                  if (support.type === "pin") {
+                    return {
+                      ...support,
+                      position: 0,
+                    };
+                  }
+
+                  if (support.type === "roller") {
+                    return {
+                      ...support,
+                      position: newLength,
+                    };
+                  }
+
+                  return support;
+                }),
               });
             }
           }}
@@ -109,6 +143,7 @@ export default function BeamInputs({ beam, onBeamChange }: BeamInputsProps) {
         {!isLengthValid && <p>Beam length must be greater than 0.</p>}
       </div>
 
+      {/* Pin Support Position */}
       <div>
         <label htmlFor="pin-support-position">Pin Support Position</label>
 
@@ -121,6 +156,7 @@ export default function BeamInputs({ beam, onBeamChange }: BeamInputsProps) {
           value={pinSupportInput}
           onChange={(event) => {
             const newInput = event.target.value;
+
             setPinSupportInput(newInput);
 
             const newPosition = Number(newInput);
@@ -132,13 +168,16 @@ export default function BeamInputs({ beam, onBeamChange }: BeamInputsProps) {
             ) {
               onBeamChange({
                 ...beam,
-                supports: [
-                  {
-                    ...pinSupport,
-                    position: newPosition,
-                  },
-                  rollerSupport,
-                ],
+
+                // Update only the pin support
+                supports: beam.supports.map((support) =>
+                  support.type === "pin"
+                    ? {
+                        ...support,
+                        position: newPosition,
+                      }
+                    : support,
+                ),
               });
             }
           }}
@@ -151,6 +190,7 @@ export default function BeamInputs({ beam, onBeamChange }: BeamInputsProps) {
         )}
       </div>
 
+      {/* Roller Support Position */}
       <div>
         <label htmlFor="roller-support-position">Roller Support Position</label>
 
@@ -163,6 +203,7 @@ export default function BeamInputs({ beam, onBeamChange }: BeamInputsProps) {
           value={rollerSupportInput}
           onChange={(event) => {
             const newInput = event.target.value;
+
             setRollerSupportInput(newInput);
 
             const newPosition = Number(newInput);
@@ -174,13 +215,16 @@ export default function BeamInputs({ beam, onBeamChange }: BeamInputsProps) {
             ) {
               onBeamChange({
                 ...beam,
-                supports: [
-                  pinSupport,
-                  {
-                    ...rollerSupport,
-                    position: newPosition,
-                  },
-                ],
+
+                // update only the roller support
+                supports: beam.supports.map((support) =>
+                  support.type === "roller"
+                    ? {
+                        ...support,
+                        position: newPosition,
+                      }
+                    : support,
+                ),
               });
             }
           }}
@@ -193,6 +237,7 @@ export default function BeamInputs({ beam, onBeamChange }: BeamInputsProps) {
         )}
       </div>
 
+      {/* Support Order Error */}
       {!isSupportOrderValid && (
         <p>Pin support cannot be positioned after the roller support.</p>
       )}
